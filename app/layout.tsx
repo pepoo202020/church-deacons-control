@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Cairo } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { LanguageProvider } from "@/components/providers/LanguageProvider";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/sonner";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const cairo = Cairo({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "600", "700", "800", "900", "1000"],
 });
 
 export const metadata: Metadata = {
@@ -23,12 +22,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <>
+      <html lang="en" suppressHydrationWarning>
+        <body className={`${cairo.className} antialiased`}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <LanguageProvider>
+              <TooltipProvider>
+                {children}
+                <Toaster richColors position="top-center" />
+              </TooltipProvider>
+            </LanguageProvider>
+          </ThemeProvider>
+        </body>
+      </html>
+    </>
   );
 }

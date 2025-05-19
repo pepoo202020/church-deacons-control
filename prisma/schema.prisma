@@ -1,0 +1,378 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum IssueStatus {
+  open
+  resolved
+  rejected
+}
+
+enum SystemPhase {
+  study
+  examSetup
+  exams
+  grading
+  reviewing
+  results
+  complaints
+}
+
+enum QualificationState {
+  qualified
+  notQualified
+  pendingReview
+}
+
+enum RoleName {
+  admin
+  teacher
+  controller
+  student
+}
+
+model Level {
+  id         String      @id @default(uuid())
+  name       String
+  order      Int
+  isActive   Boolean
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  // relations
+  classrooms Classroom[]
+}
+
+model Classroom {
+  id              String             @id @default(uuid())
+  name            String
+  description     String
+  image           String
+  isActive        Boolean
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  // relations
+  Level           Level              @relation(fields: [levelId], references: [id])
+  levelId         String
+  students        Student[]
+  subjects        ClassroomSubject[]
+  ControllerClass ControllerClass[]
+}
+
+model Student {
+  id          String   @id @default(uuid())
+  name        String
+  dateOfBirth DateTime
+  image       String
+  seatNumber  String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // relations
+  classroom             Classroom             @relation(fields: [classroomId], references: [id])
+  classroomId           String
+  academicYear          AcademicYear          @relation(fields: [academicYearId], references: [id])
+  academicYearId        String
+  subjectMarks          SubjectMark[]
+  behaviorMarks         BehaviorMark[]
+  absences              AbsenceRecord[]
+  qualificationStatuses QualificationStatus[]
+  AbsenceSummary        AbsenceSummary[]
+  ResultAccess          ResultAccess[]
+  IssueReport           IssueReport[]
+
+  @@unique([seatNumber, academicYearId])
+}
+
+model AcademicYear {
+  id          String        @id @default(uuid())
+  title       String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  // relations
+  terms       Term[]
+  students    Student[]
+  SystemState SystemState[]
+}
+
+model Term {
+  id        String   @id @default(uuid())
+  name      String
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // relations
+  academicYear        AcademicYear          @relation(fields: [academicYearId], references: [id])
+  academicYearId      String
+  SubjectMark         SubjectMark[]
+  BehaviorMark        BehaviorMark[]
+  AbsenceRecord       AbsenceRecord[]
+  AbsenceSummary      AbsenceSummary[]
+  QualificationStatus QualificationStatus[]
+  ResultAccess        ResultAccess[]
+  Exam                Exam[]
+  IssueReport         IssueReport[]
+  SystemState         SystemState[]
+}
+
+model Subject {
+  id         String   @id @default(uuid())
+  name       String
+  isFlexible Boolean
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // relations
+  classrooms  ClassroomSubject[]
+  SubjectMark SubjectMark[]
+}
+
+model ClassroomSubject {
+  id        String   @id @default(uuid())
+  maxMark   Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // relations
+  classroom      Classroom        @relation(fields: [classroomId], references: [id])
+  classroomId    String
+  subject        Subject          @relation(fields: [subjectId], references: [id])
+  subjectId      String
+  items          LessonItem[]
+  TeacherSubject TeacherSubject[]
+  Exam           Exam[]
+}
+
+model LessonItem {
+  id                 String           @id @default(uuid())
+  name               String
+  mark               Float
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  // relations
+  classroomSubject   ClassroomSubject @relation(fields: [classroomSubjectId], references: [id])
+  classroomSubjectId String
+  LessonItemMark     LessonItemMark[]
+}
+
+model SubjectMark {
+  id        String           @id @default(uuid())
+  totalMark Float
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  // relations
+  student   Student          @relation(fields: [studentId], references: [id])
+  studentId String
+  term      Term             @relation(fields: [termId], references: [id])
+  termId    String
+  subject   Subject          @relation(fields: [subjectId], references: [id])
+  subjectId String
+  itemMarks LessonItemMark[]
+}
+
+model LessonItemMark {
+  id            String      @id @default(uuid())
+  mark          Float
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  // relations
+  subjectMark   SubjectMark @relation(fields: [subjectMarkId], references: [id])
+  subjectMarkId String
+  lessonItem    LessonItem  @relation(fields: [lessonItemId], references: [id])
+  lessonItemId  String
+}
+
+model BehaviorMark {
+  id        String   @id @default(uuid())
+  mark      Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // relations
+  student   Student  @relation(fields: [studentId], references: [id])
+  studentId String
+  term      Term     @relation(fields: [termId], references: [id])
+  termId    String
+}
+
+model AbsenceRecord {
+  id        String   @id @default(uuid())
+  date      DateTime
+  kodas     Boolean
+  hesa      Boolean
+  tasbha    Boolean
+  events    Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // relations
+  student   Student  @relation(fields: [studentId], references: [id])
+  studentId String
+  term      Term     @relation(fields: [termId], references: [id])
+  termId    String
+}
+
+model AbsenceSummary {
+  id          String   @id @default(uuid())
+  totalKodas  Float
+  totalHesa   Float
+  totalTasbha Float
+  totalEvents Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  // relations
+  student     Student  @relation(fields: [studentId], references: [id])
+  studentId   String
+  term        Term     @relation(fields: [termId], references: [id])
+  termId      String
+}
+
+model QualificationStatus {
+  id        String             @id @default(uuid())
+  status    QualificationState
+  notes     String?
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  // relations
+  Student   Student            @relation(fields: [studentId], references: [id])
+  studentId String
+  term      Term               @relation(fields: [termId], references: [id])
+  termId    String
+}
+
+model ResultAccess {
+  id         String   @id @default(uuid())
+  seatNumber String   @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  // relations
+  student    Student  @relation(fields: [studentId], references: [id])
+  studentId  String
+  term       Term     @relation(fields: [termId], references: [id])
+  termId     String
+
+  @@unique([seatNumber, termId])
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        RoleName
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  // relations
+  users       User[]
+}
+
+model User {
+  id                String            @id @default(uuid())
+  email             String            @unique
+  name              String
+  password          String
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  // relations
+  passwordPatterns  PasswordPattern[]
+  controllerClasses ControllerClass[]
+  teacherSubjects   TeacherSubject[]
+  Role              Role?             @relation(fields: [roleId], references: [id])
+  roleId            String?
+  Exam              Exam[]
+  IssueReport       IssueReport[]
+  Notification      Notification[]
+}
+
+model PasswordPattern {
+  id        String   @id @default(uuid())
+  pattern   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // relations
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+}
+
+model ControllerClass {
+  id          String    @id @default(uuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  // relations
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  classroom   Classroom @relation(fields: [classroomId], references: [id])
+  classroomId String
+}
+
+model TeacherSubject {
+  id                 String           @id @default(uuid())
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  // relations
+  user               User             @relation(fields: [userId], references: [id])
+  userId             String
+  classroomSubject   ClassroomSubject @relation(fields: [classroomSubjectId], references: [id])
+  classroomSubjectId String
+}
+
+model Exam {
+  id                 String           @id @default(uuid())
+  fileUrl            String
+  uploadedAt         DateTime
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  // relations
+  classroomSubject   ClassroomSubject @relation(fields: [classroomSubjectId], references: [id])
+  classroomSubjectId String
+  term               Term             @relation(fields: [termId], references: [id])
+  termId             String
+  uploadedBy         User             @relation(fields: [uploadedById], references: [id])
+  uploadedById       String
+}
+
+model IssueReport {
+  id             String      @id @default(uuid())
+  student        Student     @relation(fields: [studentId], references: [id])
+  studentId      String
+  term           Term        @relation(fields: [termId], references: [id])
+  termId         String
+  field          String // مثلاً "ألحان - لحن تين جوشت"
+  message        String
+  reportedBy     User        @relation(fields: [reportedById], references: [id])
+  reportedById   String
+  status         IssueStatus // open, resolved, rejected
+  createdAt      DateTime    @default(now())
+  resolvedAt     DateTime?
+  resolutionNote String?
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model SystemState {
+  id             String       @id @default(uuid())
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id])
+  academicYearId String
+  term           Term         @relation(fields: [termId], references: [id])
+  termId         String
+  phase          SystemPhase // الدراسة | وضع الامتحانات | الامتحانات | الرصد | المراجعة | النتيجة | الشكاوي
+  activeFrom     DateTime
+  activeTo       DateTime
+}
