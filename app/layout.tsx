@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import { Cairo } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/providers/ThemeProvider";
-import { LanguageProvider } from "@/components/providers/LanguageProvider";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { Toaster } from "@/components/ui/sonner";
+import { Providers } from "@/components/providers/Providers";
 
 const cairo = Cairo({
   subsets: ["latin"],
@@ -25,19 +22,7 @@ export default function RootLayout({
     <>
       <html lang="en" suppressHydrationWarning>
         <body className={`${cairo.className} antialiased`}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <LanguageProvider>
-              <TooltipProvider>
-                {children}
-                <Toaster richColors position="top-center" />
-              </TooltipProvider>
-            </LanguageProvider>
-          </ThemeProvider>
+          <Providers>{children}</Providers>
         </body>
       </html>
     </>

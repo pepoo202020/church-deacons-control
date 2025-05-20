@@ -20,8 +20,8 @@ export default function Logo({
       <div
         className={cn(
           splashScreen
-            ? "bg-[url(/assets/dark-logo.png)]"
-            : "bg-[url(/assets/light-logo.jpg)] dark:bg-[url(/assets/dark-logo.png)]",
+            ? "bg-[url(/assets/darkLogo.png)]"
+            : "bg-[url(/assets/lightLogo.jpg)] dark:bg-[url(/assets/darkLogo.png)]",
           size === "SM"
             ? "w-10 h-10"
             : size === "MD"

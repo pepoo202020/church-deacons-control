@@ -18,6 +18,8 @@ import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ForgotPasswordModal from "./ForgotPasswordModal";
+import { toast } from "sonner";
+import { signIn } from "next-auth/react";
 
 export default function LoginFormFields() {
   const { language } = useLanguage();
@@ -36,7 +38,42 @@ export default function LoginFormFields() {
   });
   async function onSubmit(values: LoginFormValues) {
     setIsLoading(true);
-    console.log(values);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const res = await signIn("credentials", {
+        redirect: false,
+        email: values.email,
+        password: values.password,
+      });
+      if (res && !res.error) {
+        toast.success(
+          language === "AR"
+            ? "تم تسجيل الدخول بنجاح"
+            : "Logged in successfully",
+          {
+            description: language === "AR" ? "مرحبًا بك" : "Welcome back",
+          }
+        );
+        router.push("/dashboard");
+      } else {
+        toast.error(language === "AR" ? "حدث خطأ ما" : "Something went wrong", {
+          description:
+            language === "AR"
+              ? "يرجى المحاولة مرة أخرى"
+              : "Please try again later",
+        });
+      }
+    } catch (error) {
+      toast(language === "AR" ? "حدث خطأ ما" : "Something went wrong", {
+        description:
+          language === "AR"
+            ? "يرجى المحاولة مرة أخرى"
+            : "Please try again later",
+      });
+    } finally {
+      setIsLoading(false);
+      form.reset();
+    }
   }
   return (
     <CardContent className="space-y-4">
@@ -109,7 +146,7 @@ export default function LoginFormFields() {
           <div className="flex justify-end">
             <Button
               variant="link"
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+              className="text-sm font-medium text-indigo-600 hover:text-indigo-500 cursor-pointer"
               type="button"
               onClick={() => setIsForgotPasswordOpen(true)}
             >

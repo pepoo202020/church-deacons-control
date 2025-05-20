@@ -2,21 +2,20 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useLanguage } from "../providers/LanguageProvider";
-import { checkAuthStatus } from "@/lib/auth";
 import Logo from "../shared/Logo";
 import { Loader2 } from "lucide-react";
+import { useAuthStatus } from "@/lib/auth";
 
 const SplashScreen = () => {
   const navigate = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
   const { isRTL, language } = useLanguage();
+  const isAuthenticated = useAuthStatus();
 
   useEffect(() => {
     const checkAuth = async () => {
       // Simulate a bit of delay for the splash screen to show
       await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      const isAuthenticated = checkAuthStatus();
 
       if (isAuthenticated) {
         navigate.push("/dashboard");
@@ -28,7 +27,7 @@ const SplashScreen = () => {
     };
 
     checkAuth();
-  }, [navigate]);
+  }, [navigate, isAuthenticated]);
 
   return (
     <div

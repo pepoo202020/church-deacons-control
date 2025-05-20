@@ -32,16 +32,6 @@ export function LoginFooter() {
           </>
         )}
       </Button>
-
-      <p className="text-center text-sm text-gray-500">
-        {isRTL ? "ليس لديك حساب؟" : "Don't have an account?"}{" "}
-        <a
-          href="#"
-          className="font-medium text-indigo-600 hover:text-indigo-500 hover:underline"
-        >
-          {isRTL ? "سجل الآن" : "Sign up"}
-        </a>
-      </p>
     </CardFooter>
   );
 }

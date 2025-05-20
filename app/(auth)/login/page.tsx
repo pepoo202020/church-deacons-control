@@ -3,20 +3,21 @@ import LoginForm from "@/components/forms/login/LoginForm";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { LangThemeSelector } from "@/components/shared/LangThemeSelector";
 import Logo from "@/components/shared/Logo";
-import { checkAuthStatus } from "@/lib/auth";
+import { useAuthStatus } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 export default function LoginPage() {
   const navigate = useRouter();
   const { language, isRTL } = useLanguage();
+  const isAuthenticated = useAuthStatus();
 
   useEffect(() => {
     // If already logged in, redirect to dashboard
-    if (checkAuthStatus()) {
+    if (isAuthenticated) {
       navigate.push("/dashboard");
     }
-  }, [navigate]);
+  }, [navigate, isAuthenticated]);
   return (
     <>
       <div className="flex justify-between items-center w-full  mb-8">

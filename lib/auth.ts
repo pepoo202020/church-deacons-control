@@ -1,23 +1,7 @@
-// Check if the user is authenticated
-export const checkAuthStatus = (): boolean => {
-  // Check localStorage for user data
-  const userData = localStorage.getItem("user");
+import { useSession } from "next-auth/react";
 
-  if (userData) {
-    try {
-      const user = JSON.parse(userData);
-      return Boolean(user && user.id);
-    } catch (e) {
-      // Invalid JSON in localStorage
-      return false;
-    }
-  }
-
-  // Check for authentication cookie as fallback
-  const cookies = document.cookie.split(";");
-  const authCookie = cookies.find((cookie) =>
-    cookie.trim().startsWith("authToken=")
-  );
-
-  return Boolean(authCookie);
+// Check if the user is authenticated using NextAuth
+export const useAuthStatus = (): boolean => {
+  const { data: session, status } = useSession();
+  return status === "authenticated" && !!session?.user;
 };
