@@ -60,27 +60,12 @@ export default function ForgotPasswordModal({
   // Handle form submission
   const onSubmit = async (values: ForgotPasswordFormValues) => {
     setIsLoading(true);
+
     try {
-      // In a real application, this would call an API endpoint
-      // that would trigger the password reset email
       await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate API call
-      await forgetPassword(values.email);
 
-      toast.success(
-        "Password reset email sent successfully. Please check your email."
-      );
-
-      onClose();
-      values.email = "";
-    } catch (error) {
-      toast.error("Failed to send password reset email. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-
-    /*  try {
-      //   const result = await sendPasswordResetEmail(values.email);
-
+      const result = await forgetPassword(values.email, language);
+      console.log(result);
       if (result.success) {
         toast.success(
           language === "AR"
@@ -97,12 +82,11 @@ export default function ForgotPasswordModal({
         form.reset();
       } else {
         toast.error(language === "AR" ? "حدث خطأ" : "Error", {
-          description:
-            language === "AR" ? "يرجى المحاولة مرة أخرى" : "Please try again",
+          description: result.error,
         });
       }
     } catch (error) {
-      toast.error(language === 'AR' ? "شيء ما خطأ" : "Something went wrong", {
+      toast.error(language === "AR" ? "شيء ما خطأ" : "Something went wrong", {
         description:
           language === "AR"
             ? "حدث خطأ أثناء إرسال البريد الإلكتروني"
@@ -110,7 +94,7 @@ export default function ForgotPasswordModal({
       });
     } finally {
       setIsLoading(false);
-    } */
+    }
   };
 
   const formContent = (
