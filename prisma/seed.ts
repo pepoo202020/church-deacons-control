@@ -1,12 +1,6 @@
-import {
-  PrismaClient,
-  RoleName,
-  SystemPhase,
-  QualificationState,
-} from "./lib/generated/prisma";
+import { PrismaClient, RoleName } from "./lib/generated/prisma";
 import { hash } from "bcryptjs";
 import { Faker, ar } from "@faker-js/faker";
-import { addMonths, subYears } from "date-fns";
 
 // تعريب Faker
 const faker = new Faker({ locale: [ar] });
@@ -69,6 +63,7 @@ async function createUsers(roles: any) {
 
   const passwordHash = await hash("123456", 10);
 
+  // Create the admin user
   const adminUser = await prisma.user.upsert({
     where: { email: "admin@example.com" },
     update: {},
@@ -76,8 +71,13 @@ async function createUsers(roles: any) {
       email: "admin@example.com",
       name: "admin",
       password: passwordHash,
-      roleId: roles.adminRole.id,
     },
+  });
+
+  // Assign admin, teacher, and controller roles to the admin user
+  await prisma.userRole.createMany({
+    data: [{ userId: adminUser.id, roleId: roles.adminRole.id }],
+    skipDuplicates: true,
   });
 
   // إنشاء مدرسين
@@ -92,7 +92,6 @@ async function createUsers(roles: any) {
         email: `teacher${i}@example.com`,
         name: `${firstName} ${lastName}`,
         password: passwordHash,
-        roleId: roles.teacherRole.id,
       },
     });
     teachers.push(teacher);
@@ -110,7 +109,6 @@ async function createUsers(roles: any) {
         email: `controller${i}@example.com`,
         name: `${firstName} ${lastName}`,
         password: passwordHash,
-        roleId: roles.controllerRole.id,
       },
     });
     controllers.push(controller);

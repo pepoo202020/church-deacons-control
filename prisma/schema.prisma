@@ -266,13 +266,12 @@ model ResultAccess {
 }
 
 model Role {
-  id          String   @id @default(uuid())
+  id          String      @id @default(uuid())
   name        RoleName
   description String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  // relations
-  users       User[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  users       UserRole[]  // updated: now references UserRole join table
 }
 
 model User {
@@ -280,17 +279,26 @@ model User {
   email             String            @unique
   name              String
   password          String
+  image             String            @default("https://png.pngtree.com/png-clipart/20221231/original/pngtree-cartoon-style-male-user-profile-icon-vector-illustraton-png-image_8836451.png")
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
-  // relations
   passwordPatterns  PasswordPattern[]
   controllerClasses ControllerClass[]
   teacherSubjects   TeacherSubject[]
-  Role              Role?             @relation(fields: [roleId], references: [id])
-  roleId            String?
   Exam              Exam[]
   IssueReport       IssueReport[]
   Notification      Notification[]
+  roles             UserRole[]        // updated: now references UserRole join table
+}
+
+model UserRole {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+  role   Role   @relation(fields: [roleId], references: [id])
+  roleId String
+
+  @@unique([userId, roleId])
 }
 
 model PasswordPattern {

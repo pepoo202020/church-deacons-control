@@ -1,16 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Loader2, LogIn } from "lucide-react";
 import { CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
-export function LoginFooter() {
-  const router = useRouter();
+export function LoginFooter({ isLoading }: { isLoading: boolean }) {
   const { isRTL } = useLanguage();
-  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <CardFooter className="flex flex-col gap-4">

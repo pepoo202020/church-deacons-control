@@ -21,11 +21,16 @@ import ForgotPasswordModal from "./ForgotPasswordModal";
 import { toast } from "sonner";
 import { signIn } from "next-auth/react";
 
-export default function LoginFormFields() {
+export default function LoginFormFields({
+  isLoading,
+  setIsLoading,
+}: {
+  isLoading: boolean;
+  setIsLoading: (value: boolean) => void;
+}) {
   const { language } = useLanguage();
   const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] =
     useState<boolean>(false);
   // Initialize react-hook-form with zod resolver

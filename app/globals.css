@@ -120,3 +120,13 @@
     @apply bg-background text-foreground;
   }
 }
+main::-webkit-scrollbar {
+  width: 8px;
+}
+main::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+  border-radius: 4px;
+}
+main::-webkit-scrollbar-track {
+  background: #e5e7eb;
+}

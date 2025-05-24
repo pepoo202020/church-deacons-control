@@ -28,7 +28,7 @@ export function LangThemeSelector() {
         size="sm"
         onClick={() => setLanguage(language === "AR" ? "EN" : "AR")}
         aria-label="Toggle language"
-        className="w-9 px-0"
+        className="w-9 px-0 bg-transparent hover:bg-transparent hover:text-blue-500"
       >
         <Languages className="h-4 w-4" />
         <span className="ml-2 text-xs">{language}</span>

@@ -2,6 +2,7 @@ import NextAuth, { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import db from "@/lib/prisma";
 import { compare } from "bcryptjs";
+import { RoleName } from "@/prisma/lib/generated/prisma";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -17,6 +18,9 @@ export const authOptions: NextAuthOptions = {
         }
         const user = await db.user.findUnique({
           where: { email: credentials.email },
+          include: {
+            roles: { include: { role: true } },
+          },
         });
         if (!user) {
           throw new Error("No user found");
@@ -25,7 +29,13 @@ export const authOptions: NextAuthOptions = {
         if (!isValid) {
           throw new Error("Invalid password");
         }
-        return { id: user.id, email: user.email, name: user.name };
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          image: user.image,
+          roles: user.roles.map((r) => r.role),
+        };
       },
     }),
   ],
@@ -34,9 +44,25 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
   },
   callbacks: {
+    async jwt({ token, user }) {
+      // On sign in, merge user info into token
+      if (user) {
+        token.id = user.id;
+        token.name = user.name;
+        token.email = user.email;
+        token.image = user.image;
+        token.roles = (user as any).roles;
+      }
+      return token;
+    },
     async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.sub as string;
+      // Always populate session.user from token
+      if (session.user && token) {
+        session.user.id = token.id as string;
+        session.user.name = token.name as string;
+        session.user.email = token.email as string;
+        session.user.image = token.image as string;
+        session.user.roles = token.roles as string[];
       }
       return session;
     },

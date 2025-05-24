@@ -7,7 +7,7 @@ import { IActionResponse, LanguageType } from "@/types/types";
 export async function forgetPassword(
   email: string,
   language: LanguageType
-): Promise<IActionResponse> {
+): Promise<IActionResponse<any>> {
   try {
     const existUser = await db.user.findUnique({ where: { email } });
     if (!existUser) {
