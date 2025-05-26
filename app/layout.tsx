@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <>
       <html lang="en" suppressHydrationWarning>
-        <body className={`${cairo.className} antialiased`}>
+        <body className={`${cairo.className} antialiased overflow-hidden`}>
           <Providers>{children}</Providers>
         </body>
       </html>

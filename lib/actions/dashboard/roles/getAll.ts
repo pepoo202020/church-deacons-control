@@ -1,14 +1,25 @@
 "use server";
 
 import db from "@/lib/prisma";
-import { Role } from "@/prisma/lib/generated/prisma";
-import { IActionResponse, LanguageType } from "@/types/types";
+import {
+  IActionResponse,
+  IRoleWithUserRoles,
+  LanguageType,
+} from "@/types/types";
 
 export default async function getAllRoles(
   language: LanguageType
-): Promise<IActionResponse<Role>> {
+): Promise<IActionResponse<IRoleWithUserRoles>> {
   try {
-    const allRoles = await db.role.findMany();
+    const allRoles = await db.role.findMany({
+      include: {
+        users: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
     return {
       success: true,
       data: allRoles,

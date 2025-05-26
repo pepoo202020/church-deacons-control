@@ -1,4 +1,5 @@
 import { RoleName } from "@/prisma/lib/generated/prisma";
+import { LanguageType } from "@/types/types";
 
 export function translateRole(role: RoleName) {
   switch (role) {
