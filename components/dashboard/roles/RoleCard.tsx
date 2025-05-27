@@ -19,7 +19,8 @@ import {
   Users,
 } from "lucide-react";
 import { useState } from "react";
-import { DetailsDialog } from "./RoleCardActions/DetailsDialog";
+import { DetailsRoleDialog } from "./RoleCardActions/DetailsDialog";
+import { EditRoleDialog } from "./RoleCardActions/EditDialog";
 
 const iconMap: Record<RoleName, LucideIcon> = {
   admin: Shield,
@@ -126,10 +127,16 @@ export const RoleCard = ({
           </div>
         </CardContent>
       </Card>
-      <DetailsDialog
+      <DetailsRoleDialog
         isOpen={detailsOpen}
         language={language}
-        onClose={setDetailsOpen}
+        onClose={() => setDetailsOpen(false)}
+        role={role}
+      />
+      <EditRoleDialog
+        isOpen={editOpen}
+        language={language}
+        onClose={() => setEditOpen(false)}
         role={role}
       />
     </>

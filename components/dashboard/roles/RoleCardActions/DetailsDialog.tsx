@@ -32,14 +32,14 @@ import {
 import { useState } from "react";
 import { toast } from "sonner";
 
-export const DetailsDialog = ({
+export const DetailsRoleDialog = ({
   isOpen,
   onClose,
   language,
   role,
 }: {
   isOpen: boolean;
-  onClose: (value: boolean) => void;
+  onClose: () => void;
   language: LanguageType;
   role: IRoleWithUserRoles;
 }) => {
@@ -182,7 +182,7 @@ export const DetailsDialog = ({
         <Trash2 className="h-4 w-4 mr-2" />
         {language === "AR" ? "حذف" : "Delete"}
       </Button>
-      <Button variant="secondary" onClick={() => onClose} className="ml-auto">
+      <Button variant="secondary" onClick={onClose} className="ml-auto">
         <X className="h-4 w-4 mr-2" />
         {language === "AR" ? "إغلاق" : "Close"}
       </Button>
