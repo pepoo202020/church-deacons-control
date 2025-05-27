@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { CustomDialog } from "@/components/shared/CustomDialog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -65,7 +66,6 @@ export default function ForgotPasswordModal({
       await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate API call
 
       const result = await forgetPassword(values.email, language);
-      console.log(result);
       if (result.success) {
         toast.success(
           language === "AR"
@@ -147,45 +147,25 @@ export default function ForgotPasswordModal({
     </Form>
   );
 
-  if (isMobile) {
-    return (
-      <Sheet open={isOpen} onOpenChange={onClose}>
-        <SheetContent side="bottom" className="h-fit p-5 rounded-t-xl">
-          <SheetHeader className="mb-4">
-            <SheetTitle>
-              {language === "AR" ? "نسيت كلمة المرور" : "Forgot Password"}
-            </SheetTitle>
-            <SheetDescription>
-              {language === "AR"
-                ? "أدخل بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة المرور"
-                : "Enter your email and we'll send you a link to reset your password"}
-            </SheetDescription>
-          </SheetHeader>
-          {formContent}
-        </SheetContent>
-      </Sheet>
-    );
-  }
+  const handleClose = () => {
+    form.clearErrors();
+    form.reset();
+    setIsLoading(false);
+    onClose();
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent
-        className="sm:max-w-[425px]"
-        dir={language === "AR" ? "rtl" : "ltr"}
-      >
-        <DialogHeader>
-          <DialogTitle>
-            {language === "AR" ? "نسيت كلمة المرور" : "Forgot Password"}
-          </DialogTitle>
-          <DialogDescription>
-            {language === "AR"
-              ? "أدخل بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة المرور"
-              : "Enter your email and we'll send you a link to reset your password"}
-          </DialogDescription>
-        </DialogHeader>
-
-        {formContent}
-      </DialogContent>
-    </Dialog>
+    <>
+      <CustomDialog
+        arabicDescription="أدخل بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة المرور"
+        arabicTitle="نسيت كلمة المرور"
+        detailsContent={formContent}
+        englishDescription="Enter your email and we'll send you a link to reset your password"
+        englishTitle="Forgot Password"
+        handleClose={handleClose}
+        isOpen={isOpen}
+        language={language}
+      />
+    </>
   );
 }

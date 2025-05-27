@@ -1,4 +1,10 @@
-import { Role, User, UserRole } from "@/prisma/lib/generated/prisma";
+import {
+  Classroom,
+  Level,
+  Role,
+  User,
+  UserRole,
+} from "@/prisma/lib/generated/prisma";
 
 export type LanguageType = "AR" | "EN";
 
@@ -8,8 +14,12 @@ export interface IActionResponse<T> {
   data?: T | T[];
 }
 
+export interface IUserRoleWithUserAndRole extends UserRole {
+  user: User;
+  role: Role;
+}
 export interface IUsersWithRoles extends User {
-  roles: UserRole[];
+  roles: IUserRoleWithUserAndRole[];
 }
 
 export type RolesSortOption =
@@ -24,4 +34,8 @@ export interface IUserRoleWithUser extends UserRole {
 
 export interface IRoleWithUserRoles extends Role {
   users: IUserRoleWithUser[];
+}
+
+export interface IClassroomWithLevel extends Classroom {
+  Level: Level;
 }

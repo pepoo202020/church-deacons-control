@@ -1,14 +1,21 @@
 "use server";
 
 import db from "@/lib/prisma";
-import { Classroom } from "@/prisma/lib/generated/prisma";
-import { IActionResponse, LanguageType } from "@/types/types";
+import {
+  IActionResponse,
+  IClassroomWithLevel,
+  LanguageType,
+} from "@/types/types";
 
 export default async function getAllClasses(
   language: LanguageType
-): Promise<IActionResponse<Classroom>> {
+): Promise<IActionResponse<IClassroomWithLevel>> {
   try {
-    const allClasses = await db.classroom.findMany();
+    const allClasses = await db.classroom.findMany({
+      include: {
+        Level: true,
+      },
+    });
     return {
       success: true,
       data: allClasses,

@@ -1,4 +1,5 @@
 "use client";
+import { CustomDialog } from "@/components/shared/CustomDialog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -126,45 +127,17 @@ export const EditRoleDialog = ({
   );
   return (
     <>
-      {isMobile ? (
-        <Sheet open={isOpen} onOpenChange={handleClose}>
-          <SheetContent side="bottom" className="min-h-fit p-5">
-            <SheetHeader className="text-center">
-              <SheetTitle>
-                {language === "AR"
-                  ? `تفاصيل الدور: ${translateRole(role.name)}`
-                  : `Role Details: ${role.name}`}
-              </SheetTitle>
-              <SheetDescription>
-                {language === "AR"
-                  ? `عرض تفاصيل ومستخدمي دور ال${translateRole(role.name)}`
-                  : `View details and users for ${role.name} role`}
-              </SheetDescription>
-            </SheetHeader>
-            {detailsContent}
-            <SheetFooter className="mt-6">{actionButtons}</SheetFooter>
-          </SheetContent>
-        </Sheet>
-      ) : (
-        <Dialog open={isOpen} onOpenChange={handleClose}>
-          <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="text-center">
-                {language === "AR"
-                  ? `تفاصيل الدور: ${translateRole(role.name)}`
-                  : `Role Details: ${role.name}`}
-              </DialogTitle>
-              <DialogDescription className="text-center">
-                {language === "AR"
-                  ? `عرض تفاصيل ومستخدمي دور ال${translateRole(role.name)}`
-                  : `View details and users for ${role.name} role`}
-              </DialogDescription>
-            </DialogHeader>
-            {detailsContent}
-            <DialogFooter className="mt-6">{actionButtons}</DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
+      <CustomDialog
+        actionButtons={actionButtons}
+        arabicDescription={`View details and users for ${role.name} role`}
+        arabicTitle={`تفاصيل الدور: ${translateRole(role.name)}`}
+        detailsContent={detailsContent}
+        englishDescription={`View details and users for ${role.name} role`}
+        englishTitle={`Role Details: ${role.name}`}
+        handleClose={handleClose}
+        isOpen={isOpen}
+        language={language}
+      />
     </>
   );
 };

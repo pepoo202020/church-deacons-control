@@ -1,4 +1,5 @@
 "use client";
+import { CustomDialog } from "@/components/shared/CustomDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -169,66 +170,44 @@ export const DetailsRoleDialog = ({
   );
 
   const actionButtons = (
-    <div className={`flex gap-2`}>
-      <Button variant="outline" onClick={() => setEditOpen(true)}>
-        <Pencil className="h-4 w-4 mr-2" />
-        {language === "AR" ? "تعديل" : "Edit"}
-      </Button>
-      <Button variant="outline" onClick={() => setAssignOpen(true)}>
-        <UserPlus className="h-4 w-4 mr-2" />
-        {language === "AR" ? "تعيين مستخدمين" : "Assign Users"}
-      </Button>
-      <Button variant="destructive" onClick={() => setDeleteOpen(true)}>
-        <Trash2 className="h-4 w-4 mr-2" />
-        {language === "AR" ? "حذف" : "Delete"}
-      </Button>
-      <Button variant="secondary" onClick={onClose} className="ml-auto">
-        <X className="h-4 w-4 mr-2" />
-        {language === "AR" ? "إغلاق" : "Close"}
-      </Button>
+    <div className={`flex   gap-2  items-center justify-between w-full`}>
+      <div className="flex   gap-2">
+        <Button variant="outline" onClick={() => setEditOpen(true)}>
+          <Pencil className="h-4 w-4 mr-2" />
+          {language === "AR" ? "تعديل" : "Edit"}
+        </Button>
+        <Button variant="outline" onClick={() => setAssignOpen(true)}>
+          <UserPlus className="h-4 w-4 mr-2" />
+          {language === "AR" ? "تعيين مستخدمين" : "Assign Users"}
+        </Button>
+        <Button variant="destructive" onClick={() => setDeleteOpen(true)}>
+          <Trash2 className="h-4 w-4 mr-2" />
+          {language === "AR" ? "حذف" : "Delete"}
+        </Button>
+      </div>
+      <div>
+        <Button variant="secondary" onClick={onClose}>
+          <X className="h-4 w-4 mr-2" />
+          {language === "AR" ? "إغلاق" : "Close"}
+        </Button>
+      </div>
     </div>
   );
   return (
     <>
-      {isMobile ? (
-        <Sheet open={isOpen} onOpenChange={onClose}>
-          <SheetContent side="bottom" className="min-h-fit p-5">
-            <SheetHeader className="text-center">
-              <SheetTitle>
-                {language === "AR"
-                  ? `تفاصيل الدور: ${translateRole(role.name)}`
-                  : `Role Details: ${role.name}`}
-              </SheetTitle>
-              <SheetDescription>
-                {language === "AR"
-                  ? `عرض تفاصيل ومستخدمي دور ال${translateRole(role.name)}`
-                  : `View details and users for ${role.name} role`}
-              </SheetDescription>
-            </SheetHeader>
-            {detailsContent}
-            <SheetFooter className="mt-6">{actionButtons}</SheetFooter>
-          </SheetContent>
-        </Sheet>
-      ) : (
-        <Dialog open={isOpen} onOpenChange={onClose}>
-          <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="text-center">
-                {language === "AR"
-                  ? `تفاصيل الدور: ${translateRole(role.name)}`
-                  : `Role Details: ${role.name}`}
-              </DialogTitle>
-              <DialogDescription className="text-center">
-                {language === "AR"
-                  ? `عرض تفاصيل ومستخدمي دور ال${translateRole(role.name)}`
-                  : `View details and users for ${role.name} role`}
-              </DialogDescription>
-            </DialogHeader>
-            {detailsContent}
-            <DialogFooter className="mt-6">{actionButtons}</DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
+      <CustomDialog
+        actionButtons={actionButtons}
+        arabicDescription={`عرض تفاصيل ومستخدمي دور ال${translateRole(
+          role.name
+        )}`}
+        arabicTitle={`تفاصيل الدور: ${translateRole(role.name)}`}
+        detailsContent={detailsContent}
+        englishDescription={`View details and users for ${role.name} role`}
+        englishTitle={`Role Details: ${role.name}`}
+        handleClose={onClose}
+        isOpen={isOpen}
+        language={language}
+      />
     </>
   );
 };
