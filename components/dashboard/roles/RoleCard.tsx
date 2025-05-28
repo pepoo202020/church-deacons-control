@@ -22,6 +22,7 @@ import { useState } from "react";
 import { DetailsRoleDialog } from "./RoleCardActions/DetailsDialog";
 import { EditRoleDialog } from "./RoleCardActions/EditDialog";
 import { AssignUsersDialog } from "./RoleCardActions/AssignUsersDialog";
+import { DeleteDialog } from "./RoleCardActions/DeleteDialog";
 
 const iconMap: Record<RoleName, LucideIcon> = {
   admin: Shield,
@@ -145,6 +146,12 @@ export const RoleCard = ({
         isOpen={assignOpen}
         language={language}
         onClose={() => setAssignOpen(false)}
+        role={role}
+      />
+      <DeleteDialog
+        isOpen={deleteOpen}
+        language={language}
+        onClose={() => setDeleteOpen(false)}
         role={role}
       />
     </>
